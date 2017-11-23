@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>使用BootStrap和vue构造留言板</title>
+	<link rel="stylesheet" type="text/css" href="./lib/bootstrap.min.css">
+	<script src="./lib/jquery-1.7.2.js"></script>
+	<script src="./lib/bootstrap.js"></script>
+	<script src="./lib/vue.js"></script>
+</head>
+<body>
+	<div class="container" id="box">	
+		<form >		
+			<div class="form-group">
+				<label for="username">用户名</label>
+				<input type="text" id="username"  class="form-control" placeholder="输入用户名" v-model="username">	
+			</div>
+			<div class="form-group">
+				<label for="password">密码</label>
+				<input type="password" id="password" class="form-control" placeholder="输入密码" v-model="password">
+			</div>
+
+			<div class="form-group text-right">
+				<input type="button" value="提交" class="btn btn-primary" @click="add()">
+				<input type="reset" value="重置" class="btn btn-danger">
+			</div>			
+		</form>
+
+		<table class="table table-bordered table-hover table-striped">
+			<caption class="h2 text-info">用户信息列表</caption>
+			<tr>
+				<th class="text-center text-danger">序号</th>
+				<th class="text-center">用户名</th>
+				<th class="text-center">密码</th>
+				<th class="text-center">操作</th>
+			</tr>
+			<tr class="text-center" v-for="item in myData">
+				<td>{{$index+1}}</td>
+				<td>{{item.username}}</td>
+				<td>{{item.password}}</td>
+				<td>
+					<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#layer" 
+					@click="formatToolTips($index)">删除</button>
+				</td>
+			</tr>
+			<tr v-show="myData.length!=0">
+				<td colspan="4" class="text-right">
+					<button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#layer" @click="formatToolTips(-100)">删除全部</button>
+				</td>
+			</tr>
+			<tr v-show="myData.length==0">
+				<td colspan="4" class="text-center text-muted">
+					<p>暂无数据....</p>
+				</td>
+			</tr>
+
+		</table>
+
+
+		<!--模态框 弹出框-->
+		<div class="modal fade" id="layer">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span>&times;</span>
+						</button>
+						<h4 class="modal-title">{{toolTips}}</h4>
+					</div>
+					<div class="modal-body text-right">
+						<button data-dismiss="modal" class="btn btn-primary btn-sm">取消</button>
+						<button data-dismiss="modal" class="btn btn-danger btn-sm" @click="deleteData(nowIndex)">确认</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+	</div>
+
+</body>
+</html>
+
+
+<script type="text/javascript">
+	
+	var vm = new Vue({
+		el: "#box",
+		data:{
+			myData:[],
+			username:"",
+			password:"",
+			nowIndex:-100,
+			toolTips:"确认删除么?"
+		},
+		methods:{
+			add:function(){
+				this.myData.push({
+					username:this.username,
+					password:this.password
+				});
+				this.username="";
+				this.password="";
+			},
+			deleteData:function(nowIndex){
+				if(nowIndex<0){
+					this.myData=[];
+				}else{
+					this.myData.splice(nowIndex,1);
+				}
+			},
+			formatToolTips:function(index){
+				this.nowIndex = index;
+				if(index<0){
+					this.toolTips="确认删除全部么";
+				}else{
+					this.toolTips="确认删除么";
+				}
+			}
+
+		}
+	
+	})
+
+
+
+
+
+</script>
+
+
+
+
+
+
+
+
+<!-- 
+	1.<div class="container"> 将代码包裹在div中，container固定大小，container_fluid全屏大小
+	2.<div class="form-group"> 能自动将组中的控件进行对齐
+	3.<label for="对应的inputid">
+	4.<input class="form-control">:form-control可以对input、textarea、select 拉升至container大小
+	5.按钮使用<input type="button" value=""> 	<button>value</button>
+	6.table控件
+		<table class="table table-bordered table-hover">
+			<caption>
+			<tr>
+				<th></th>
+			</tr>
+			<tr>
+				<td></td>
+			</tr>
+		</table>
+
+	7.text-right/left:设置位置
+	  text-info/danger/muted:设置颜色
+	8.使用模态框的控件加入 data-toggle="modal" data-target="#myModal"
+	9.在html中输出的时候才需要{{}}，在指令和函数里面是不需要的
+
+
+
+
+ -->
